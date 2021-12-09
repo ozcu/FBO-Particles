@@ -77,13 +77,14 @@ shaderMaterial= new THREE.ShaderMaterial({
     uniforms:{
         positionTexture:{value:null},
         uTime:{value:0},
+        uFrequency:{value:5.0},
+        uAmplitude:{value:1.0},
+        uMaxDistance:{value:2.0}
     }
 
 
 }) 
 
-
-//const material = new THREE.MeshBasicMaterial({color:new THREE.Color(0xff0000)})
 
 //Loaders
 
@@ -143,9 +144,10 @@ for (let i = 0; i<arr.length; i=i+4){
 positionVariable = gpuCompute.addVariable('texturePosition',fragmentSimulation, dtPosition)
 
 positionVariable.material.uniforms['uTime'] = {value:0}
-positionVariable.material.uniforms['uFrequency'] = {value:5.0} //5.0
-positionVariable.material.uniforms['uAmplitude'] = {value:0.5} //0.0005
-positionVariable.material.uniforms['maxDistance'] = {value:4.0} //0.0005
+
+// positionVariable.material.uniforms['uFrequency'] = {value:5.0} //5.0
+// positionVariable.material.uniforms['uAmplitude'] = {value:0.5} //0.0005
+// positionVariable.material.uniforms['maxDistance'] = {value:4.0} //0.0005
 
 positionVariable.wrapS = THREE.RepeatWrapping
 positionVariable.wrapT = THREE.RepeatWrapping
@@ -156,22 +158,20 @@ gpuCompute.init()
 const gui = new GUI()
 
 
-gui.add(positionVariable.material.uniforms.uFrequency, 'value').min(0).max(20).step(0.0001).name('Frequency')
-gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(20).step(0.0001).name('Amplitude')
-gui.add(positionVariable.material.uniforms.maxDistance, 'value').min(0).max(20).step(0.0001).name('maxDistance')
+// gui.add(positionVariable.material.uniforms.uFrequency, 'value').min(0).max(20).step(0.0001).name('Frequency')
+// gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(20).step(0.0001).name('Amplitude')
+// gui.add(positionVariable.material.uniforms.maxDistance, 'value').min(0).max(20).step(0.0001).name('maxDistance')
 
-
-
-animateScene()
-
-})
+gui.add(shaderMaterial.uniforms.uFrequency,'value').min(0).max(20).step(0.0001).name('Frequency')
+gui.add(shaderMaterial.uniforms.uAmplitude,'value').min(0).max(20).step(0.0001).name('Amplitude')
+gui.add(shaderMaterial.uniforms.uMaxDistance,'value').min(0).max(20).step(0.0001).name('maxDistance')
 
 
 
 
 //Geometry
 
-const geometry = new THREE.BufferGeometry()
+let geometry = new THREE.BufferGeometry()
 let positions = new Float32Array(WIDTH*WIDTH*3)
 let reference = new Float32Array(WIDTH*WIDTH*2)
 
@@ -189,8 +189,20 @@ for(let i = 0;i<WIDTH*WIDTH;i++){
 geometry.setAttribute('position',new THREE.BufferAttribute(positions,3))
 geometry.setAttribute('reference',new THREE.BufferAttribute(reference,2))
 
+geometry = trex.geometry //for GPGPU disable this
+
 const points = new THREE.Points(geometry,shaderMaterial)
 scene.add(points)
+
+animateScene()
+
+})
+
+
+
+
+
+
 
 /**
  * Renderer
@@ -220,11 +232,12 @@ const animateScene = () =>
     controls.update()
 
     //Update shader with time
-    // shaderMaterial.uniforms.uTime.value = elapsedTime
-    positionVariable.material.uniforms['uTime'].value = elapsedTime
-    gpuCompute.compute()
+    shaderMaterial.uniforms.uTime.value = elapsedTime
 
-    shaderMaterial.uniforms.positionTexture.value = gpuCompute.getCurrentRenderTarget(positionVariable).texture
+    //Enable below for GPGPU
+    // positionVariable.material.uniforms['uTime'].value = elapsedTime
+    // gpuCompute.compute()
+    // shaderMaterial.uniforms.positionTexture.value = gpuCompute.getCurrentRenderTarget(positionVariable).texture
     
     // Render
     renderer.render(scene, camera)
