@@ -24,7 +24,7 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0xffffff) //0x132020
+scene.background = new THREE.Color(0x3a3b3c) //0x132020
 
 /**
  * Sizes
@@ -143,24 +143,27 @@ for (let i = 0; i<arr.length; i=i+4){
 positionVariable = gpuCompute.addVariable('texturePosition',fragmentSimulation, dtPosition)
 
 positionVariable.material.uniforms['uTime'] = {value:0}
-positionVariable.material.uniforms['uFrequency'] = {value:0.0} //5.0
-positionVariable.material.uniforms['uAmplitude'] = {value:0.0} //0.0005
+positionVariable.material.uniforms['uFrequency'] = {value:5.0} //5.0
+positionVariable.material.uniforms['uAmplitude'] = {value:0.5} //0.0005
+positionVariable.material.uniforms['maxDistance'] = {value:4.0} //0.0005
 
 positionVariable.wrapS = THREE.RepeatWrapping
 positionVariable.wrapT = THREE.RepeatWrapping
-
-
 
 gpuCompute.init()
     
 //GUI
 const gui = new GUI()
-const text = {}
-text.value = 'Try 5.0 & 0.0003'
-gui.add(positionVariable.material.uniforms.uFrequency, 'value').min(0).max(5).step(0.0001).name('Frequency')
-gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(0.05).step(0.0001).name('Amplitude')
-gui.add(text,'value').name('Example')
-    animateScene()
+
+
+gui.add(positionVariable.material.uniforms.uFrequency, 'value').min(0).max(20).step(0.0001).name('Frequency')
+gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(20).step(0.0001).name('Amplitude')
+gui.add(positionVariable.material.uniforms.maxDistance, 'value').min(0).max(20).step(0.0001).name('maxDistance')
+
+
+
+animateScene()
+
 })
 
 
@@ -186,8 +189,8 @@ for(let i = 0;i<WIDTH*WIDTH;i++){
 geometry.setAttribute('position',new THREE.BufferAttribute(positions,3))
 geometry.setAttribute('reference',new THREE.BufferAttribute(reference,2))
 
-const plane = new THREE.Points(geometry,shaderMaterial)
-scene.add(plane)
+const points = new THREE.Points(geometry,shaderMaterial)
+scene.add(points)
 
 /**
  * Renderer
@@ -200,15 +203,12 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
 
-
-
-
-
 /**
  * Animate
  */
 const clock = new THREE.Clock()
 let lastElapsedTime = 0
+
 
 const animateScene = () =>
 {
@@ -220,7 +220,7 @@ const animateScene = () =>
     controls.update()
 
     //Update shader with time
-    shaderMaterial.uniforms.uTime.value = elapsedTime
+    // shaderMaterial.uniforms.uTime.value = elapsedTime
     positionVariable.material.uniforms['uTime'].value = elapsedTime
     gpuCompute.compute()
 

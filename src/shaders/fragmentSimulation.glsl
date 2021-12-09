@@ -2,7 +2,9 @@ uniform float uTime;
 uniform sampler2D texturePosition;
 uniform float uFrequency;
 uniform float uAmplitude;
+uniform float maxDistance;
 varying vec2 vUv;
+varying vec3 vPosition;
 
 
 
@@ -140,11 +142,11 @@ void main()	{
         uFrequency * pos.z
         );
 
-    // float maxDistance = 0.1;
-    // float d = length(pos-target)/maxDistance;
-    // pos = mix(pos,target,pow(d,5.0));
+    //float maxDistance = 3.5;
+     float d = length(pos-target)/maxDistance;
+     pos = mix(pos,target,pow(d,5.0));
 
 
-    gl_FragColor = vec4( target  , 1.0 );
+    gl_FragColor = vec4( pos  , 1.0 );
 
 }

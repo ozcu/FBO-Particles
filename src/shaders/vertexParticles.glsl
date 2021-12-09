@@ -10,6 +10,7 @@ uniform sampler2D positionTexture;
 void main(){
 
     vUv = reference;
+    vPosition = position;
     vec3 pos = texture2D(positionTexture,reference).xyz;
     
     vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
