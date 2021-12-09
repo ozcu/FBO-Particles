@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 import { GPUComputationRenderer } from 'three/examples/jsm/misc/GPUComputationRenderer.js';
+import GUI from 'lil-gui'
 
 import boilerVertexShader from './shaders/vertex.glsl'
 import boilerVertexParticles from './shaders/vertexParticles.glsl'
@@ -75,7 +76,7 @@ shaderMaterial= new THREE.ShaderMaterial({
     fragmentShader:boilerFragmentShader,
     uniforms:{
         positionTexture:{value:null},
-        uTime:{value:0}
+        uTime:{value:0},
     }
 
 
@@ -142,15 +143,26 @@ for (let i = 0; i<arr.length; i=i+4){
 positionVariable = gpuCompute.addVariable('texturePosition',fragmentSimulation, dtPosition)
 
 positionVariable.material.uniforms['uTime'] = {value:0}
+positionVariable.material.uniforms['uFrequency'] = {value:0.0} //5.0
+positionVariable.material.uniforms['uAmplitude'] = {value:0.0} //0.0005
+
 positionVariable.wrapS = THREE.RepeatWrapping
 positionVariable.wrapT = THREE.RepeatWrapping
 
+
+
 gpuCompute.init()
+    
+//GUI
+const gui = new GUI()
 
-
+gui.add(positionVariable.material.uniforms.uFrequency, 'value').min(0).max(5).step(0.0001).name('Frequency')
+gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(0.5).step(0.001).name('Amplitude')
 
     animateScene()
 })
+
+
 
 
 //Geometry

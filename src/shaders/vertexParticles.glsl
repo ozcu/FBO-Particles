@@ -1,4 +1,6 @@
 uniform float uTime;
+uniform float uFrequency;
+uniform float uAmplitude;
 varying vec2 vUv;
 varying vec3 vPosition;
 attribute vec2 reference;

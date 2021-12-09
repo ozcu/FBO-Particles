@@ -1,5 +1,7 @@
 uniform float uTime;
 uniform sampler2D texturePosition;
+uniform float uFrequency;
+uniform float uAmplitude;
 varying vec2 vUv;
 
 
@@ -130,12 +132,12 @@ void main()	{
     vec4 tmpPos = texture2D( texturePosition, uv );
     vec3 pos = tmpPos.xyz;
 
-    float frequency = 5.0;
-    float amplitude = 0.0005;
-    vec3 target = pos + amplitude * curl(
-        frequency * pos.x,
-        frequency * pos.y,
-        frequency * pos.z
+    // float uFrequency = 5.0;
+    // float uAmplitude = 0.0005;
+    vec3 target = pos + uAmplitude * curl(
+        uFrequency * pos.x,
+        uFrequency * pos.y,
+        uFrequency * pos.z
         );
 
     // float maxDistance = 0.1;
