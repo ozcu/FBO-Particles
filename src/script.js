@@ -155,10 +155,11 @@ gpuCompute.init()
     
 //GUI
 const gui = new GUI()
-
+const text = {}
+text.value = 'Try 5.0 & 0.0003'
 gui.add(positionVariable.material.uniforms.uFrequency, 'value').min(0).max(5).step(0.0001).name('Frequency')
-gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(0.5).step(0.001).name('Amplitude')
-
+gui.add(positionVariable.material.uniforms.uAmplitude, 'value').min(0).max(0.05).step(0.0001).name('Amplitude')
+gui.add(text,'value').name('Example')
     animateScene()
 })
 
