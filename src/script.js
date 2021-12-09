@@ -77,9 +77,9 @@ shaderMaterial= new THREE.ShaderMaterial({
     uniforms:{
         positionTexture:{value:null},
         uTime:{value:0},
-        uFrequency:{value:1.0},
-        uAmplitude:{value:1.0},
-        uMaxDistance:{value:2.0}
+        uFrequency:{value:0.3342},
+        uAmplitude:{value:4.5132},
+        uMaxDistance:{value:7.2172}
     }
 
 
